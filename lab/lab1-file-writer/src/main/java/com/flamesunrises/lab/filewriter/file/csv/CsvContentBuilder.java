@@ -31,7 +31,6 @@ public class CsvContentBuilder<T> {
 
   public CsvContentBuilder<T> withHeaderFields(List<String> headerFields) {
     if ((headerFields == null || headerFields.isEmpty()) && includeHeader) {
-      // default header fields
       List<String> objectFields = getObjectFields(dataClass);
       this.headerFields = objectFields;
     } else {
