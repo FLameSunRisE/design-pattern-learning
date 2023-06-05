@@ -1,5 +1,19 @@
 # lab1 file writer
 
+- [lab1 file writer](#lab1-file-writer)
+    - [1.CsvContentBuilder Demo](#1csvcontentbuilder-demo)
+    - [1.0. 架構圖](#10-架構圖)
+    - [1.2. 架構說明](#12-架構說明)
+      - [WriterStrategy 策略](#writerstrategy-策略)
+        - [WriterStrategy - CsvWriterStrategy 類別](#writerstrategy---csvwriterstrategy-類別)
+      - [AbstractCsvFormatStrategy 抽象類別](#abstractcsvformatstrategy-抽象類別)
+      - [Builder](#builder)
+      - [具體的 CSV 格式化策略類別](#具體的-csv-格式化策略類別)
+      - [WriterStrategy 介面](#writerstrategy-介面)
+    - [1.3. 使用說明](#13-使用說明)
+      - [csvWriterStrategyBuilderDemo\_default](#csvwriterstrategybuilderdemo_default)
+      - [csvWriterStrategyBuilderDemo\_remove\_column](#csvwriterstrategybuilderdemo_remove_column)
+
 ---
 
 ### 1.CsvContentBuilder Demo
