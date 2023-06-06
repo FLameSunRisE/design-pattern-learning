@@ -1,4 +1,4 @@
-package com.flamesunrises.lab.filewriter.file.csv.format;
+package com.flamesunrises.lab.filewriter.file.format.csv;
 
 import java.util.List;
 import org.slf4j.Logger;
@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultCsvFormatConvert<T> extends AbstractCsvFormatStrategy<T> {
 
-  private static final Logger logger = LoggerFactory.getLogger("fridayBatch");
+  private static final Logger logger = LoggerFactory.getLogger(DefaultCsvFormatConvert.class);
 
   public DefaultCsvFormatConvert(Class<T> dataClass) {
     super(dataClass);

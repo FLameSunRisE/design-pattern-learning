@@ -1,4 +1,4 @@
-package com.flamesunrises.lab.filewriter.file.csv.format;
+package com.flamesunrises.lab.filewriter.file.format.csv;
 
 import com.flamesunrises.lab.filewriter.dto.User;
 import java.util.ArrayList;

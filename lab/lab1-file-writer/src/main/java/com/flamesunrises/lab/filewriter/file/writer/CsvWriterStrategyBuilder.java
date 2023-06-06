@@ -1,8 +1,7 @@
-package com.flamesunrises.lab.filewriter.file.csv;
+package com.flamesunrises.lab.filewriter.file.writer;
 
-import com.flamesunrises.lab.filewriter.file.csv.format.DefaultCsvFormatConvert;
-import com.flamesunrises.lab.filewriter.file.csv.format.ICsvFormatStrategy;
-import com.flamesunrises.lab.filewriter.file.writer.CsvWriterStrategy;
+import com.flamesunrises.lab.filewriter.file.format.csv.DefaultCsvFormatConvert;
+import com.flamesunrises.lab.filewriter.file.format.csv.ICsvFormatStrategy;
 import com.flamesunrises.lab.filewriter.file.FileWriterStrategy;
 import com.flamesunrises.lab.filewriter.file.IFileWriterStrategy;
 import java.lang.reflect.Field;

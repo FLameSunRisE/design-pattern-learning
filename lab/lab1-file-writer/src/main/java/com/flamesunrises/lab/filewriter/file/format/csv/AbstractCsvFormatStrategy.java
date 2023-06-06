@@ -1,4 +1,4 @@
-package com.flamesunrises.lab.filewriter.file.csv.format;
+package com.flamesunrises.lab.filewriter.file.format.csv;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractCsvFormatStrategy<T> implements ICsvFormatStrategy<T> {
 
-  private static final Logger logger = LoggerFactory.getLogger("fridayBatch");
+  private static final Logger logger = LoggerFactory.getLogger(AbstractCsvFormatStrategy.class);
 
   private Class<T> dataClass;
   private boolean isIncludeHeader;

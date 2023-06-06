@@ -2,6 +2,7 @@
 
 - [lab1 file writer](#lab1-file-writer)
     - [1.CsvContentBuilder Demo](#1csvcontentbuilder-demo)
+    - [1.CsvContentBuilder Demo](#1csvcontentbuilder-demo-1)
     - [1.0. 架構圖](#10-架構圖)
     - [1.2. 架構說明](#12-架構說明)
       - [WriterStrategy 策略](#writerstrategy-策略)
@@ -13,6 +14,11 @@
     - [1.3. 使用說明](#13-使用說明)
       - [csvWriterStrategyBuilderDemo\_default](#csvwriterstrategybuilderdemo_default)
       - [csvWriterStrategyBuilderDemo\_remove\_column](#csvwriterstrategybuilderdemo_remove_column)
+    - [2.JsonContentBuilder Demo](#2jsoncontentbuilder-demo)
+    - [2.0. 架構圖](#20-架構圖)
+    - [2.2. 架構說明](#22-架構說明)
+    - [2.3. 使用說明](#23-使用說明)
+  - [3. 整合](#3-整合)
 
 ---
 
@@ -20,19 +26,11 @@
 
 這個範例展示了如何使用 `CsvContentBuilder` 類來生成 CSV 文件內容，並將其寫入文件。
 
-- [lab1 file writer](#lab1-file-writer)
-    - [1.CsvContentBuilder Demo](#1csvcontentbuilder-demo)
-    - [1.0. 架構圖](#10-架構圖)
-    - [1.2. 架構說明](#12-架構說明)
-      - [WriterStrategy 策略](#writerstrategy-策略)
-        - [WriterStrategy - CsvWriterStrategy 類別](#writerstrategy---csvwriterstrategy-類別)
-      - [AbstractCsvFormatStrategy 抽象類別](#abstractcsvformatstrategy-抽象類別)
-      - [Builder](#builder)
-      - [具體的 CSV 格式化策略類別](#具體的-csv-格式化策略類別)
-      - [WriterStrategy 介面](#writerstrategy-介面)
-    - [1.3. 使用說明](#13-使用說明)
-      - [csvWriterStrategyBuilderDemo\_default](#csvwriterstrategybuilderdemo_default)
-      - [csvWriterStrategyBuilderDemo\_remove\_column](#csvwriterstrategybuilderdemo_remove_column)
+---
+
+### 1.CsvContentBuilder Demo
+
+這個範例展示了如何使用 `CsvContentBuilder` 類來生成 CSV 文件內容，並將其寫入文件。
 
 ---
 
@@ -40,7 +38,6 @@
 
 ```plantuml
 @startuml
-
 interface WriterStrategy<T> {
     + writeData(filePath: String, data: List<T>): void
 }
@@ -211,3 +208,154 @@ CsvWriterStrategyBuilder <|-- CsvFileWriterStrategy
 3. 建立 `CsvWriterStrategy`：調用 `build` 方法生成 `CsvWriterStrategy`。
 
 4. 產生 CSV 文件內容：調用 `getCsvContentData` 方法，將用戶列表傳入，生成 CSV 文件內容。
+
+---
+
+### 2.JsonContentBuilder Demo
+
+這個範例展示了如何使用 `JsonContentBuilder` 類來生成 CSV 文件內容，並將其寫入文件。
+
+---
+
+### 2.0. 架構圖
+
+```plantuml
+@startuml
+interface JsonWriterStrategy<T> {
+  + writeData(filePath: String, data: List<T>): void
+}
+
+interface IJsonFormatStrategy<T> {
+  + formatData(data: T): String
+  + formatDataList(dataList: List<T>): String
+}
+
+abstract class AbstractJsonFormatStrategy<T> {
+  - Class<T> dataClass
+  - ObjectMapper objectMapper
+  + formatData(data: T): String
+  + formatDataList(dataList: List<T>): String
+  - configureObjectMapper(): void
+}
+
+class DefaultJsonFormatStrategy<T> {
+  + DefaultJsonFormatStrategy(Class<T> dataClass)
+  + formatData(data: T): String
+}
+
+class CustomJsonFormatStrategy<T> {
+  + CustomJsonFormatStrategy(Class<T> dataClass, JsonSerializer dateSerializer)
+  + formatData(data: T): String
+}
+
+class JsonWriterStrategyBuilder<T> {
+  - Class<?> dataClass
+  - boolean includeHeader
+  - List<String> headerFields
+  - IJsonFormatStrategy<T> formatStrategy
+  + withIncludeHeader(includeHeader: boolean): JsonWriterStrategyBuilder<T>
+  + withHeaderFields(headerFields: List<String>): JsonWriterStrategyBuilder<T>
+  + withFormatStrategy(formatStrategy: IJsonFormatStrategy<T>): JsonWriterStrategyBuilder<T>
+  + build(): JsonWriterStrategy<T>
+}
+
+class JsonWriterStrategyImpl<T> {
+  - IJsonFormatStrategy<T> formatStrategy
+  - IFileWriterStrategy writerStrategy
+  + writeData(filePath: String, data: List<T>): void
+}
+
+interface IFileWriterStrategy {
+  + writeData(filePath: String, content: String): void
+}
+
+class DefaultFileWriterStrategy {
+  + writeData(filePath: String, content: String): void
+}
+
+JsonWriterStrategy <-- JsonWriterStrategyBuilder
+JsonWriterStrategyImpl --> IJsonFormatStrategy
+JsonWriterStrategyImpl --> IFileWriterStrategy
+JsonWriterStrategyBuilder --> IJsonFormatStrategy
+JsonWriterStrategyBuilder --> IFileWriterStrategy
+JsonWriterStrategyBuilder <|-- DefaultFileWriterStrategy
+JsonWriterStrategyBuilder <|-- CsvFileWriterStrategy
+AbstractJsonFormatStrategy <|.. DefaultJsonFormatStrategy
+AbstractJsonFormatStrategy <|.. CustomJsonFormatStrategy
+JsonWriterStrategy <-- JsonWriterStrategyImpl
+JsonWriterStrategyBuilder <|-- JsonWriterStrategyImpl
+
+@enduml
+```
+
+---
+
+### 2.2. 架構說明
+
+---
+
+### 2.3. 使用說明
+
+## 3. 整合
+
+```plantuml
+@startuml
+
+interface IFormatStrategy<T> {
+    + formatDataList(dataList: List<T>): String
+}
+
+interface IFileWriterStrategy<T> {
+    + writeData(filePath: String, dataList: List<T>, formatStrategy: IFormatStrategy<T>): void
+}
+
+abstract class AbstractFormatStrategy<T> {
+    - filePath: String
+
+    + setFilePath(filePath: String): void
+    + writeDataToFile(filePath: String, formattedData: String): void
+}
+
+class CsvFormatStrategy<T> {
+    + formatDataList(dataList: List<T>): String
+}
+
+class JsonFormatStrategy<T> {
+    + formatDataList(dataList: List<T>): String
+}
+
+class FileWriterStrategy<T> {
+    + writeData(filePath: String, dataList: List<T>, formatStrategy: IFormatStrategy<T>): void
+}
+
+class CsvWriterStrategy<T> {
+    - formatStrategy: IFormatStrategy<T>
+    - writerStrategy: IFileWriterStrategy<T>
+
+    + writeData(filePath: String, dataList: List<T>): void
+}
+
+class JsonWriterStrategy<T> {
+    - formatStrategy: IFormatStrategy<T>
+    - writerStrategy: IFileWriterStrategy<T>
+
+    + writeData(filePath: String, dataList: List<T>): void
+}
+
+interface IWriterStrategy<T> {
+    + writeData(filePath: String, dataList: List<T>): void
+}
+
+CsvWriterStrategy --|> IWriterStrategy
+JsonWriterStrategy --|> IWriterStrategy
+CsvWriterStrategy -- CsvFormatStrategy
+JsonWriterStrategy -- JsonFormatStrategy
+CsvFormatStrategy -- AbstractFormatStrategy
+JsonFormatStrategy -- AbstractFormatStrategy
+CsvWriterStrategy -- IFileWriterStrategy
+JsonWriterStrategy -- IFileWriterStrategy
+
+@enduml
+
+
+```

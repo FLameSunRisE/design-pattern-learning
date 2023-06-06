@@ -2,9 +2,13 @@ package com.flamesunrises.lab.filewriter;
 
 import com.flamesunrises.lab.filewriter.dto.User;
 import com.flamesunrises.lab.filewriter.file.csv.CsvContentBuilder;
-import com.flamesunrises.lab.filewriter.file.csv.CsvWriterStrategyBuilder;
-import com.flamesunrises.lab.filewriter.file.csv.format.DefaultCsvFormatConvert;
+import com.flamesunrises.lab.filewriter.file.format.csv.DefaultCsvFormatConvert;
+import com.flamesunrises.lab.filewriter.file.format.json.DefaultJsonFormatConverter;
 import com.flamesunrises.lab.filewriter.file.writer.CsvWriterStrategy;
+import com.flamesunrises.lab.filewriter.file.writer.CsvWriterStrategyBuilder;
+import com.flamesunrises.lab.filewriter.file.writer.JsonWriterStrategy;
+import com.flamesunrises.lab.filewriter.file.writer.JsonWriterStrategyBuilder;
+import com.flamesunrises.lab.filewriter.serializer.UserDataDateSerializer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -16,8 +20,9 @@ public class DemoMain {
   private static final Logger logger = LoggerFactory.getLogger(DemoMain.class);
 
   public static void main(String[] args) {
-    csvWriterStrategyBuilderDemo_default();
-    csvWriterStrategyBuilderDemo_remove_column();
+    jsonWriterStrategyBuilderDemo_default();
+    //    csvWriterStrategyBuilderDemo_default();
+    //    csvWriterStrategyBuilderDemo_remove_column();
 
     //        csvContentBuilderDemo_default();
     //        csvContentBuilderDemo_column_custom();
@@ -28,23 +33,21 @@ public class DemoMain {
     List<User> userList = getUserList();
 
     // 2. 產生csv builder
-    CsvWriterStrategyBuilder<User> csvWriterStrategyBuilder = new CsvWriterStrategyBuilder<>(
-        User.class)
-        .withIncludeHeader(true)
-        .withHeaderFields(null)
-        .withColumnFields(null)
-        .withFormatStrategy(new DefaultCsvFormatConvert(User.class));
+    // Step 1: 创建 CsvWriterStrategy 的建造者 JsonWriterStrategyBuilder
+    JsonWriterStrategyBuilder jsonWriterStrategyBuilder = new JsonWriterStrategyBuilder(
+        User.class).withFormatStrategy(
+        new DefaultJsonFormatConverter(User.class, new UserDataDateSerializer()));
 
     // 3. 產生csv file content
-    CsvWriterStrategy<User> csvWriterStrategy = csvWriterStrategyBuilder.build();
-    csvWriterStrategy.getCsvContentData(userList);
+    JsonWriterStrategy<User> jsonWriterStrategy = jsonWriterStrategyBuilder.build();
+    jsonWriterStrategy.getContentData(userList);
+
     /* OUTPUT
       17:55:54.196 [main] INFO fridayBatch - csvContent : id,name,age,gender,email,phone
       1,John,30,Male,john@example.com,1234567890
       2,Mary,25,Female,mary@example.com,987653210
      */
   }
-
 
   private static void csvWriterStrategyBuilderDemo_default() {
     // 1. prepare data
@@ -60,11 +63,9 @@ public class DemoMain {
 
     // 3. 產生csv file content
     CsvWriterStrategy<User> csvWriterStrategy = csvWriterStrategyBuilder.build();
-    csvWriterStrategy.getCsvContentData(userList);
+    csvWriterStrategy.getContentData(userList);
     /* OUTPUT
-      17:55:54.196 [main] INFO fridayBatch - csvContent : id,name,age,gender,email,phone
-      1,John,30,Male,john@example.com,1234567890
-      2,Mary,25,Female,mary@example.com,987653210
+     18:11:58.923 [main] INFO com.flamesunrises.lab.filewriter.file.writer.JsonWriterStrategy - getContentData : [{"id":1,"name":"John","age":30,"gender":"Male","email":"john@example.com","phone":1234567890},{"id":2,"name":"Mary","age":25,"gender":"Female","email":"mary@example.com","phone":987653210}]
      */
   }
 
@@ -85,7 +86,7 @@ public class DemoMain {
 
     // 3. 產生csv file content
     CsvWriterStrategy<User> csvWriterStrategy = csvWriterStrategyBuilder.build();
-    csvWriterStrategy.getCsvContentData(userList);
+    csvWriterStrategy.getContentData(userList);
     /* OUTPUT
       17:55:54.201 [main] INFO fridayBatch - csvContent : 姓名,歲數
       John,30

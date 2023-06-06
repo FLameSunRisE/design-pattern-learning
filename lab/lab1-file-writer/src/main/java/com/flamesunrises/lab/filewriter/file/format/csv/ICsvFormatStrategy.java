@@ -1,8 +1,9 @@
-package com.flamesunrises.lab.filewriter.file.csv.format;
+package com.flamesunrises.lab.filewriter.file.format.csv;
 
+import com.flamesunrises.lab.filewriter.file.format.IFormatStrategy;
 import java.util.List;
 
-public interface ICsvFormatStrategy<T> {
+public interface ICsvFormatStrategy<T> extends IFormatStrategy<T> {
 
   String formatHeader(List<String> headerFields);
 
